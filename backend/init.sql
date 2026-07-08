@@ -7,7 +7,7 @@ CREATE TABLE category (
 CREATE TABLE event (
     event_id             INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name                 VARCHAR(256) NOT NULL,
-    fullday              CHAR(1) NOT NULL,
+    fullday              BOOLEAN NOT NULL,
     date_start           DATE NOT NULL,
     time_start           TIME,
     date_end             DATE NOT NULL,
