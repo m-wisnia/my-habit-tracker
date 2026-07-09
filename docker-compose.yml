@@ -16,7 +16,7 @@ services:
     build: ./backend
     container_name: springboot_backend
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -25,6 +25,20 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - db
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
 
 volumes:
   pgdata:
