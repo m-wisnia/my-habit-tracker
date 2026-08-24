@@ -1,15 +1,30 @@
+@import "tailwindcss";
+
 :root {
-  --text: #000000;
-  --text-h: #08060d;
-  --bg: #a1cfa179;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(74, 114, 78, 0.514);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(47, 58, 50, 0.87);
+  --text-brown: #5F4631;
+  --text-white: #FFFFFF;
+  --bg-dark: #8A9B7D;
+  --bg-light: #D6E2BD;
+  --frame-beige: #FAF5E1;
+  --frame-light-beige: #FFFDF5;
+  --frame-dark-beige: #E9DCC8;
+  --event-dark: #5F3351;
+  --event-light: #EFD1E6;
+  --class-dark: #795A0C;
+  --class-light: #F8E3BB;
+  --project-dark: #294057;
+  --project-light: #BCD0E4;
+  --project-highlight: #D7E3EE;
+  --project-muted: #839BB2;
+  --habit-dark: #3A4B2C;
+  --habit-light: #D4E1CB;
+  --health-dark: #2E1E46;
+  --health-light: #DED4EC;
+  --health-muted: #A091B6;
+
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -51,6 +66,10 @@
 } */
 
 body {
+  background: var(--bg-light);
+  font-family: 'Young Serif', serif;
+  font-weight: 400;
+  font-style: normal;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -95,19 +114,4 @@ h2 {
 }
 p {
   margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }
