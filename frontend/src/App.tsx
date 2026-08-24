@@ -1,14 +1,15 @@
-import { MenuBar } from '@/components/menu-bar';
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import Homepage from './Homepage';
 
 function App() {
-  // const [view, setView] = useState<string>('home');
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100" id="center">
-      <MenuBar />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<Homepage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
