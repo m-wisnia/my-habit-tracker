@@ -26,28 +26,32 @@ export const CalendarBig = () => {
     setYear(getYear(today));
   }, []);
 
+  const decreaseMonth = () => {
+    if (month != null && year) {
+      if (month == 0) {
+        setYear(year - 1);
+      }
+      setMonth(month > 0 ? month - 1 : 11);
+    }
+  };
+
+  const increaseMonth = () => {
+    if (month != null && year) {
+      if (month == 11) {
+        setYear(year + 1);
+      }
+      setMonth(month < 11 ? month + 1 : 0);
+    }
+  };
+
   return (
     <div className="w-[800px] h-[720px] bg-[var(--frame-beige)] m-[30px] rounded-2xl">
-      <div className="flex w-full h-[65px] bg-[var(--frame-dark-beige)] rounded-t-2xl text-[var(--text-brown)] text-[30px] items-center">
-        <div className="flex relative left-1/2 -translate-x-1/2 items-center gap-[20px]">
-          <CircleArrowLeft
-            onClick={() => {
-              if (month == 0) {
-                setYear(year - 1);
-              }
-              setMonth(month > 0 ? month - 1 : 11);
-            }}
-          />
+      <div className="relative flex w-full h-[65px] bg-[var(--frame-dark-beige)] rounded-t-2xl text-[var(--text-brown)] text-[30px] items-center justify-between px-60">
+        <CircleArrowLeft onClick={() => decreaseMonth()} />
+        <div className="absolute left-1/2 -translate-x-1/2">
           {month != null ? months[month] : ''} {year}
-          <CircleArrowRight
-            onClick={() => {
-              if (month == 11) {
-                setYear(year + 1);
-              }
-              setMonth(month < 11 ? month + 1 : 0);
-            }}
-          />
         </div>
+        <CircleArrowRight onClick={() => increaseMonth()} />
       </div>
     </div>
   );
