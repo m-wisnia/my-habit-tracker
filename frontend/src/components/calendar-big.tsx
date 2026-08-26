@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
-import { DayTile } from './day-tile';
+import { DayTile, dateToISODate } from './day-tile';
 
 export const CalendarBig = () => {
   const [month, setMonth] = useState<number | null>(null);
@@ -129,7 +129,7 @@ export const CalendarBig = () => {
 
       <div className="grid grid-cols-7 gap-[10px] m-5 mt-1">
         {extraBefore?.map((date) => (
-          <DayTile key={date.toISOString()} date={date} muted={true} />
+          <DayTile key={dateToISODate(date)} date={date} muted={true} />
         ))}
 
         {month != null && year
@@ -142,7 +142,7 @@ export const CalendarBig = () => {
           : ''}
 
         {extraAfter?.map((date) => (
-          <DayTile key={date.toISOString()} date={date} muted={true} />
+          <DayTile key={dateToISODate(date)} date={date} muted={true} />
         ))}
       </div>
     </div>
