@@ -1,12 +1,12 @@
 create table category (
-  category_id int generated always as identity primary key,
+  category_id bigint generated always as identity primary key,
   name text not null,
   color varchar(7) not null,
   check (color ~ '^#[0-9A-Fa-f]{6}$')
 );
 
 create table event (
-  event_id int generated always as identity primary key,
+  event_id bigint generated always as identity primary key,
   color varchar(7) Default '#EFD1E6',
   name text not null,
   address text,
@@ -15,8 +15,8 @@ create table event (
   time_start time,
   date_end date not null,
   time_end time,
-  category_id int not null Default 1,
   notes text,
+  category_id bigint not null Default 1,
   check (
     -- Full-day event
     (
@@ -47,69 +47,71 @@ alter table event
 add constraint event_category_fk foreign key (category_id) references category (category_id);
 
 create table subject (
-  subject_id int generated always as identity primary key,
+  subject_id bigint generated always as identity primary key,
   color varchar(7) Default '#F8E3BB',
   name text not null,
   check (color ~ '^#[0-9A-Fa-f]{6}$')
 );
 
-create table class (
-  class_id int generated always as identity primary key,
+create table course (
+  course_id bigint generated always as identity primary key,
   type text not null,
-  professor text,
-  room text,
   repeat_weeks int,
-  subject_id int not null,
+  subject_id bigint not null,
   check (
     repeat_weeks is null
     or repeat_weeks > 0
   )
 );
 
-alter table class
-add constraint class_subject_fk foreign key (subject_id) references subject (subject_id);
+alter table course
+add constraint course_subject_fk foreign key (subject_id) references subject (subject_id);
 
-create table class_event (
-  class_event_id int generated always as identity primary key,
+create table course_class (
+  course_class_id bigint generated always as identity primary key,
   class_date date not null,
   time_start time not null,
   duration interval not null,
-  class_id int not null
+  professor text,
+  room text,
+  course_id bigint not null
 );
 
-alter table class_event
-add constraint class_event_class_fk foreign key (class_id) references class (class_id);
+alter table course_class
+add constraint course_class_fk foreign key (course_id) references course (course_id);
 
 create table exam (
-  exam_id int generated always as identity primary key,
+  exam_id bigint generated always as identity primary key,
   name text not null,
   exam_date date not null,
   time_start time not null,
   duration interval not null,
   notes text,
-  subject_id int not null
+  subject_id bigint not null
 );
 
 alter table exam
 add constraint exam_subject_fk foreign key (subject_id) references subject (subject_id);
 
 create table habit (
-  habit_id int generated always as identity primary key,
+  habit_id bigint generated always as identity primary key,
+  color varchar(7) Default '#D4E1CB',
   name text not null,
   days int[] not null,
-  goal numeric not null,
+  goal numeric(10, 2) not null,
   unit text,
   check (
     goal >= 0
     and days <@ ARRAY[1, 2, 3, 4, 5, 6, 7]
+    and color ~ '^#[0-9A-Fa-f]{6}$'
   )
 );
 
 create table habit_instance (
-  habit_instance_id int generated always as identity primary key,
+  habit_instance_id bigint generated always as identity primary key,
   habit_date date not null,
-  completion numeric not null,
-  habit_id int not null,
+  completion numeric(10, 2) not null,
+  habit_id bigint not null,
   check (completion >= 0)
 );
 
@@ -117,27 +119,30 @@ alter table habit_instance
 add constraint habit_instance_habit_fk foreign key (habit_id) references habit (habit_id);
 
 create table project (
-  project_id int generated always as identity primary key,
+  project_id bigint generated always as identity primary key,
+  color varchar(7) Default '#BCD0E4',
   name text not null,
-  start_date date not null Default now()
+  start_date date not null Default now(),
+  check (color ~ '^#[0-9A-Fa-f]{6}$')
 );
 
 create table activity (
-  project_activity_id int generated always as identity primary key,
+  project_activity_id bigint generated always as identity primary key,
   activity_date date not null,
-  activity_time interval,
-  project_id int not null
+  duration interval,
+  project_id bigint not null
 );
 
 alter table activity
 add constraint activity_project_fk foreign key (project_id) references project (project_id);
 
 create table stage (
-  stage_id int generated always as identity primary key,
+  stage_id bigint generated always as identity primary key,
   stage_number int not null,
   name text not null,
+  completed boolean not null,
   deadline timestamp,
-  project_id int not null,
+  project_id bigint not null,
   check (stage_number >= 0)
 );
 
@@ -145,22 +150,23 @@ alter table stage
 add constraint stage_project_fk foreign key (project_id) references project (project_id);
 
 create table task (
-  task_id int generated always as identity primary key,
+  task_id bigint generated always as identity primary key,
   name text not null,
   deadline timestamp,
   completed boolean not null,
-  stage_id int
+  project_id bigint not null,
+  stage_id bigint
 );
 
 alter table task
 add constraint task_stage_fk foreign key (stage_id) references stage (stage_id);
 
 create table photo (
-  photo_id int generated always as identity primary key,
-  filename text,
-  content_type text,
-  photo bytea,
-  project_id int not null,
+  photo_id bigint generated always as identity primary key,
+  filename text not null,
+  content_type text not null,
+  photo bytea not null,
+  project_id bigint not null,
   check (
     content_type in ('jpeg', 'png')
     and length(trim(filename)) > 0

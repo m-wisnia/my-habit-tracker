@@ -5,17 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "category")
+@Table(name = "subject")
 @Data
 @NoArgsConstructor
-public class Category {
+public class Subject {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long categoryId;
+  private Long subjectId;
+
+  @Column(length = 7)
+  private String color;
 
   @Column(nullable = false)
   private String name;
-
-  @Column(nullable = false, length = 7)
-  private String color;
 }
