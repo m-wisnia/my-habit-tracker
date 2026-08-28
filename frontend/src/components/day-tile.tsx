@@ -1,5 +1,6 @@
 import { getDate, isWeekend } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 interface DayTileProps {
   date: Date;
@@ -16,6 +17,7 @@ export const dateToISODate = (date: Date) => {
 
 export const DayTile = ({ date, muted = false }: DayTileProps) => {
   const navigate = useNavigate();
+  const [events, setEvents] = useState<Event[] | null>(null);
 
   return (
     <div
