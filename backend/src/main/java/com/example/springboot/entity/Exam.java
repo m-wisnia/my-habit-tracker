@@ -27,7 +27,7 @@ public class Exam {
     @Column(nullable = false)
     private LocalTime timeStart;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "interval")
     private Duration duration;
 
     @Column

@@ -1,5 +1,5 @@
-import { CalendarBig } from './components/calendar-big';
-import { MenuBar } from './components/menu-bar';
+import { CalendarBig } from '../components/calendar-big';
+import { MenuBar } from '../components/menu-bar';
 
 function Homepage() {
   return (

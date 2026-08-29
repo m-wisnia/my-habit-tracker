@@ -20,7 +20,7 @@ public class Activity {
     @Column(nullable = false)
     private LocalDate activityDate;
 
-    @Column
+    @Column(columnDefinition = "interval")
     private Duration duration;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -1,9 +1,11 @@
 import { getDate, isWeekend } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import type { Event } from '../Types';
 
 interface DayTileProps {
   date: Date;
+  events: Event[];
   muted?: Boolean;
 }
 
@@ -15,9 +17,10 @@ export const dateToISODate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-export const DayTile = ({ date, muted = false }: DayTileProps) => {
+export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Event[] | null>(null);
+
+  useEffect(() => {}, []);
 
   return (
     <div
@@ -28,6 +31,13 @@ export const DayTile = ({ date, muted = false }: DayTileProps) => {
       onClick={() => navigate(`/calendar/${dateToISODate(date)}`)}
     >
       <span className="leading-none">{getDate(date)}</span>
+      <div>
+        {events.map((event) => (
+          <div key={event.eventId}>
+            <h3>{event.name}</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

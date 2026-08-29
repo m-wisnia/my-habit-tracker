@@ -1,13 +1,23 @@
 import { useEffect, useState } from 'react';
-import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
+import {
+  getDaysInMonth,
+  getMonth,
+  getYear,
+  getDay,
+  addDays,
+  lastDayOfMonth,
+} from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
 import { DayTile, dateToISODate } from './day-tile';
+import type { Event } from '../Types';
+import { getEventsBetweenDates } from '@/api/eventApi';
 
 export const CalendarBig = () => {
   const [month, setMonth] = useState<number | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [extraBefore, setExtraBefore] = useState<Date[]>([]);
   const [extraAfter, setExtraAfter] = useState<Date[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const months = [
     'January',
     'February',
@@ -24,18 +34,46 @@ export const CalendarBig = () => {
   ];
   const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-  const handleToday = () => {
-    const today: Date = new Date();
+  useEffect(() => {
+    const today = new Date();
+
     const currentMonth = getMonth(today);
     const currentYear = getYear(today);
-    setMonth(getMonth(today));
-    setYear(getYear(today));
+
+    setMonth(currentMonth);
+    setYear(currentYear);
     fillDays(currentYear, currentMonth);
-  };
+  }, []);
 
   useEffect(() => {
-    handleToday();
-  }, []);
+    if (month === null || year === null) {
+      return;
+    }
+
+    const currentMonth = month;
+    const currentYear = year;
+
+    async function loadEvents() {
+      try {
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+        const daysBefore = (getDay(firstDayOfMonth) + 6) % 7;
+        const firstVisibleDay = addDays(firstDayOfMonth, -daysBefore);
+        const lastVisibleDay = addDays(firstVisibleDay, 41);
+        setEvents([]);
+
+        const data = await getEventsBetweenDates(
+          dateToISODate(firstVisibleDay),
+          dateToISODate(lastVisibleDay),
+        );
+
+        setEvents(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadEvents();
+  }, [month, year]);
 
   const decreaseMonth = () => {
     if (month != null && year) {
@@ -129,20 +167,50 @@ export const CalendarBig = () => {
 
       <div className="grid grid-cols-7 gap-[10px] m-5 mt-1">
         {extraBefore?.map((date) => (
-          <DayTile key={dateToISODate(date)} date={date} muted={true} />
+          <DayTile
+            key={dateToISODate(date)}
+            date={date}
+            events={events.filter(
+              (event) =>
+                dateToISODate(date) >= event.dateStart &&
+                dateToISODate(date) <= event.dateEnd,
+            )}
+            muted={true}
+          />
         ))}
 
         {month != null && year
           ? Array.from(
               { length: getDaysInMonth(new Date(year, month, 1)) },
-              (_, index) => (
-                <DayTile key={index} date={new Date(year, month, index + 1)} />
-              ),
+              (_, index) => {
+                const date = new Date(year, month, index + 1);
+                const dateISO = dateToISODate(date);
+
+                return (
+                  <DayTile
+                    key={index}
+                    date={date}
+                    events={events.filter(
+                      (event) =>
+                        dateISO >= event.dateStart && dateISO <= event.dateEnd,
+                    )}
+                  />
+                );
+              },
             )
           : ''}
 
         {extraAfter?.map((date) => (
-          <DayTile key={dateToISODate(date)} date={date} muted={true} />
+          <DayTile
+            key={dateToISODate(date)}
+            date={date}
+            events={events.filter(
+              (event) =>
+                dateToISODate(date) >= event.dateStart &&
+                dateToISODate(date) <= event.dateEnd,
+            )}
+            muted={true}
+          />
         ))}
       </div>
     </div>

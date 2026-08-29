@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "event")
@@ -17,24 +20,30 @@ public class Event {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long eventId;
 
+  @NotBlank(message = "Color is required")
+  @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Color must be a valid hex color")
   @Column(length = 7)
   private String color;
 
+  @NotBlank(message = "Name is required")
   @Column(nullable = false)
   private String name;
 
   @Column
   private String address;
 
+  @NotNull(message = "Fullday must be specified")
   @Column(nullable = false)
   private Boolean fullday;
 
+  @NotNull(message = "Start date is required")
   @Column(nullable = false)
   private LocalDate dateStart;
 
   @Column
   private LocalTime timeStart;
 
+  @NotNull(message = "End date is required")
   @Column(nullable = false)
   private LocalDate dateEnd;
 
@@ -46,6 +55,5 @@ public class Event {
 
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", nullable = false)
-  @ToString.Exclude
   private Category category;
 }
