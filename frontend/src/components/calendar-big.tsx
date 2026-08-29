@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  getDaysInMonth,
-  getMonth,
-  getYear,
-  getDay,
-  addDays,
-  lastDayOfMonth,
-} from 'date-fns';
+import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
 import { DayTile, dateToISODate } from './day-tile';
 import type { Event } from '../Types';
@@ -153,7 +146,14 @@ export const CalendarBig = () => {
         </button>
         <button
           className="cursor-pointer w-[85px] h-[30px] bg-[var(--frame-light-beige)] rounded-3xl text-base content-center hover:scale-105"
-          onClick={() => handleToday()}
+          onClick={() => {
+            const today = new Date();
+            const newYear = getYear(today);
+            const newMonth = getMonth(today);
+            setMonth(newMonth);
+            setYear(newYear);
+            fillDays(newYear, newMonth);
+          }}
         >
           Today
         </button>
