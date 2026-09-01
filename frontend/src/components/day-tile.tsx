@@ -30,7 +30,7 @@ export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`absolute top-0 left-0 z-50 w-full min-h-[90px] rounded-xl font-[Inter] text-sm flex flex-col px-1 pt-2 group-hover:shadow-lg
+        className={`absolute top-0 left-0 z-50 min-w-[100px] min-h-[90px] rounded-xl font-[Inter] text-sm flex flex-col px-1 pt-2 group-hover:shadow-lg
         ${isWeekend(date) ? 'bg-[var(--frame-light-beige)]' : 'bg-white'}
         ${muted ? 'text-gray-400' : 'text-black'}
         ${isToday(date) ? 'outline-2 outline-[var(--bg-dark)]' : ''}`}
@@ -43,12 +43,12 @@ export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
           {(isHovered ? events : events.slice(0, 3)).map((event) => (
             <div
               key={event.eventId}
-              className="w-full rounded-3xl text-[var(--event-dark)] font-[Young_Serif] text-xs text-left pl-2 mb-1"
+              className="w-full rounded-3xl text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap"
               style={{ backgroundColor: event.color }}
             >
-              {event.name.length > 9
-                ? event.name.slice(0, 10) + '...'
-                : event.name}
+              {event.name.length <= 9 || isHovered
+                ? event.name
+                : event.name.slice(0, 10) + '...'}
             </div>
           ))}
         </div>
