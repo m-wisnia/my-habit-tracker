@@ -12,9 +12,9 @@ create table event (
   address text,
   fullday boolean not null,
   date_start date not null,
+  date_end date,
   time_start time,
-  date_end date not null,
-  time_end time,
+  duration interval,
   notes text,
   category_id bigint not null Default 1,
   check (
@@ -22,7 +22,7 @@ create table event (
     (
       fullday = true
       and time_start is null
-      and time_end is null
+      and duration is null
       and date_end >= date_start
     )
     or
@@ -30,14 +30,9 @@ create table event (
     (
       fullday = false
       and time_start is not null
-      and time_end is not null
-      and (
-        date_end > date_start
-        or (
-          date_end = date_start
-          and time_end > time_start
-        )
-      )
+      and duration is not null
+      and duration <= interval '1 day'
+      and duration > interval '0'
     )
     and (color ~ '^#[0-9A-Fa-f]{6}$')
   )
@@ -232,7 +227,7 @@ insert into
     date_start,
     time_start,
     date_end,
-    time_end,
+    duration,
     category_id,
     notes
   )
@@ -243,8 +238,8 @@ values
     false,
     '2026-08-27',
     '12:30:00',
-    '2026-08-27',
-    '14:15:00',
+    null,
+    '2 hours 30 minutes',
     1,
     null
   ),
@@ -254,7 +249,7 @@ values
     true,
     '2026-08-15',
     null,
-    '2026-08-17',
+    '2026-08-20',
     null,
     1,
     'Note'
@@ -265,8 +260,8 @@ values
     false,
     '2026-08-16',
     '11:00:00',
-    '2026-08-16',
-    '12:00:00',
+    null,
+    '1 hour',
     1,
     'Note'
   ),
@@ -276,8 +271,8 @@ values
     false,
     '2026-08-16',
     '11:00:00',
-    '2026-08-16',
-    '12:00:00',
+    null,
+    '1 hour',
     1,
     'Note'
   ),
@@ -287,8 +282,8 @@ values
     false,
     '2026-08-16',
     '11:00:00',
-    '2026-08-16',
-    '12:00:00',
+    null,
+    '1 hour',
     1,
     'Note'
   );

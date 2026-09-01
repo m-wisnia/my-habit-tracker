@@ -1,4 +1,4 @@
-import { getDate, isWeekend, isToday } from 'date-fns';
+import { getDate, isWeekend, isToday, isEqual } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import type { Event } from '../Types';
@@ -43,7 +43,8 @@ export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
           {(isHovered ? events : events.slice(0, 3)).map((event) => (
             <div
               key={event.eventId}
-              className="w-full rounded-3xl text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap"
+              className={`w-full text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap 
+                ${event.fullday && event.dateStart != event.dateEnd ? (dateToISODate(date) == event.dateStart ? 'rounded-l-3xl' : dateToISODate(date) == event.dateEnd ? 'rounded-r-3xl' : '') : 'rounded-3xl'}`}
               style={{ backgroundColor: event.color }}
             >
               {event.name.length <= 9 || isHovered

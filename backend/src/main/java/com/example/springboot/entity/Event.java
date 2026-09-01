@@ -1,7 +1,11 @@
 package com.example.springboot.entity;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -41,14 +45,14 @@ public class Event {
   private LocalDate dateStart;
 
   @Column
-  private LocalTime timeStart;
-
-  @NotNull(message = "End date is required")
-  @Column(nullable = false)
   private LocalDate dateEnd;
 
   @Column
-  private LocalTime timeEnd;
+  private LocalTime timeStart;
+
+  @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
+  @Column(columnDefinition = "interval")
+  private Duration duration;
 
   @Column
   private String notes;

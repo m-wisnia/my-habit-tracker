@@ -13,8 +13,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
   @Query("""
       SELECT e
       FROM Event e
-      WHERE e.dateStart <= :date
-      AND e.dateEnd >= :date
+      WHERE e.dateStart = :date
+      OR (e.dateEnd is not null AND e.dateStart <= :date AND e.dateEnd >= :date )
       """)
   List<Event> findEventsHappeningOn(@Param("date") LocalDate date);
 
@@ -22,7 +22,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
       SELECT e
       FROM Event e
       WHERE e.dateStart <= :date2
-      AND e.dateEnd >= :date1
+      AND e.dateStart >= :date1
+      OR (e.dateEnd is not null AND e.dateEnd >= :date1 AND e.dateStart <= :date2)
       """)
   List<Event> findEventsBetweenDates(
       @Param("date1") LocalDate date1,

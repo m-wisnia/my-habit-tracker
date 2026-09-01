@@ -12,8 +12,8 @@ export interface Event {
   fullday: boolean;
   dateStart: string;
   timeStart: string | null;
-  dateEnd: string;
-  timeEnd: string | null;
+  dateEnd: string | null;
+  duration: string | null;
   notes: string | null;
   category: Category;
 }

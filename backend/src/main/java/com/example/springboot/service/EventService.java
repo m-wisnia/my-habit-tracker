@@ -41,7 +41,7 @@ public class EventService {
     event.setDateStart(updatedEvent.getDateStart());
     event.setTimeStart(updatedEvent.getTimeStart());
     event.setDateEnd(updatedEvent.getDateEnd());
-    event.setTimeEnd(updatedEvent.getTimeEnd());
+    event.setDuration(updatedEvent.getDuration());
     event.setNotes(updatedEvent.getNotes());
     event.setCategory(updatedEvent.getCategory());
 
@@ -62,16 +62,11 @@ public class EventService {
       throw new IllegalArgumentException("Event end date cannot be before its start date");
     }
     if (event.getFullday()) {
-      if (event.getTimeStart() != null || event.getTimeEnd() != null) {
+      if (event.getTimeStart() != null || event.getDuration() != null) {
         throw new IllegalArgumentException("Fullday events cannot have set times");
       }
-    } else {
-      if (event.getTimeStart() == null || event.getTimeEnd() == null) {
-        throw new IllegalArgumentException("Non-fullday events need to have a specified start and end times");
-      }
-      if (event.getDateEnd().isEqual(event.getDateStart()) && event.getTimeEnd().isBefore(event.getTimeStart())) {
-        throw new IllegalArgumentException("Event end date cannot be before its start date");
-      }
+    } else if (event.getTimeStart() == null || event.getDuration() == null) {
+      throw new IllegalArgumentException("Non-fullday events need to have a specified start and end times");
     }
   }
 }

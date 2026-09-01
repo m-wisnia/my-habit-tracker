@@ -172,8 +172,10 @@ export const CalendarBig = () => {
             date={date}
             events={events.filter(
               (event) =>
-                dateToISODate(date) >= event.dateStart &&
-                dateToISODate(date) <= event.dateEnd,
+                dateToISODate(date) == event.dateStart ||
+                (event.dateEnd &&
+                  dateToISODate(date) >= event.dateStart &&
+                  dateToISODate(date) <= event.dateEnd),
             )}
             muted={true}
           />
@@ -192,7 +194,10 @@ export const CalendarBig = () => {
                     date={date}
                     events={events.filter(
                       (event) =>
-                        dateISO >= event.dateStart && dateISO <= event.dateEnd,
+                        dateISO == event.dateStart ||
+                        (event.dateEnd &&
+                          dateISO >= event.dateStart &&
+                          dateISO <= event.dateEnd),
                     )}
                   />
                 );
@@ -206,8 +211,10 @@ export const CalendarBig = () => {
             date={date}
             events={events.filter(
               (event) =>
-                dateToISODate(date) >= event.dateStart &&
-                dateToISODate(date) <= event.dateEnd,
+                dateToISODate(date) == event.dateStart ||
+                (event.dateEnd &&
+                  dateToISODate(date) >= event.dateStart &&
+                  dateToISODate(date) <= event.dateEnd),
             )}
             muted={true}
           />
