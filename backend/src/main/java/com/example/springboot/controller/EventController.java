@@ -8,8 +8,6 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/events")
@@ -26,7 +24,7 @@ public class EventController {
       @RequestParam LocalDate date1,
       @RequestParam LocalDate date2) {
 
-    return eventService.getEventsBetweenDays(date1, date2);
+    return eventService.getEventsBetweenDates(date1, date2);
   }
 
   @GetMapping

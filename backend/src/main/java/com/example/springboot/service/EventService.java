@@ -16,10 +16,6 @@ public class EventService {
     this.eventRepository = eventRepository;
   }
 
-  public List<Event> getEventsBetweenDays(LocalDate date1, LocalDate date2) {
-    return eventRepository.findEventsBetweenDates(date1, date2);
-  }
-
   public Event getEventById(Long id) {
     return eventRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Event not found"));
@@ -51,6 +47,10 @@ public class EventService {
 
   public void deleteEvent(Long id) {
     eventRepository.deleteById(id);
+  }
+
+  public List<Event> getEventsBetweenDates(LocalDate date1, LocalDate date2) {
+    return eventRepository.findEventsBetweenDates(date1, date2);
   }
 
   public List<Event> getEventsOnDate(LocalDate date) {

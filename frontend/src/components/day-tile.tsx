@@ -1,27 +1,32 @@
-import { getDate, isWeekend, isToday, isEqual } from 'date-fns';
+import { getDate, isWeekend, isToday } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { Event } from '../Types';
+import type { Event, CourseClass } from '../Types';
+import { dateToISODate, isEvent } from '@/utils';
 
 interface DayTileProps {
   date: Date;
-  events: Event[];
+  allEvents: (Event | CourseClass)[];
   muted?: Boolean;
 }
 
-export const dateToISODate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-};
-
-export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
+export const DayTile = ({ date, allEvents, muted = false }: DayTileProps) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {}, []);
+
+  const sortedEvents = [...allEvents].sort((a, b) => {
+    const dateA = isEvent(a)
+      ? `${a.dateStart}T${a.timeStart ?? '00:00'}`
+      : a.classStart;
+
+    const dateB = isEvent(b)
+      ? `${b.dateStart}T${b.timeStart ?? '00:00'}`
+      : b.classStart;
+
+    return new Date(dateA).getTime() - new Date(dateB).getTime();
+  });
 
   return (
     <div
@@ -40,18 +45,37 @@ export const DayTile = ({ date, events, muted = false }: DayTileProps) => {
           {getDate(date)}
         </span>
         <div>
-          {(isHovered ? events : events.slice(0, 3)).map((event) => (
-            <div
-              key={event.eventId}
-              className={`w-full text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap 
+          {(isHovered ? sortedEvents : sortedEvents.slice(0, 3)).map(
+            (event) => {
+              if (isEvent(event)) {
+                return (
+                  <div
+                    key={`event-${event.eventId}`}
+                    className={`w-full text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap 
                 ${event.fullday && event.dateStart != event.dateEnd ? (dateToISODate(date) == event.dateStart ? 'rounded-l-3xl' : dateToISODate(date) == event.dateEnd ? 'rounded-r-3xl' : '') : 'rounded-3xl'}`}
-              style={{ backgroundColor: event.color }}
-            >
-              {event.name.length <= 9 || isHovered
-                ? event.name
-                : event.name.slice(0, 10) + '...'}
-            </div>
-          ))}
+                    style={{ backgroundColor: event.color }}
+                  >
+                    {event.name.length <= 7 || isHovered
+                      ? event.name
+                      : event.name.slice(0, 8) + '...'}
+                  </div>
+                );
+              } else {
+                const subjectName = event.course.subject.name;
+                return (
+                  <div
+                    key={`class-${event.courseClassId}`}
+                    className="w-full text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap rounded-3xl"
+                    style={{ backgroundColor: event.course.subject.color }}
+                  >
+                    {subjectName.length <= 7 || isHovered
+                      ? subjectName
+                      : subjectName.slice(0, 8) + '...'}
+                  </div>
+                );
+              }
+            },
+          )}
         </div>
       </div>
     </div>

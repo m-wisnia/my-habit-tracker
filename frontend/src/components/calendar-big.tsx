@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
-import { DayTile, dateToISODate } from './day-tile';
-import type { Event } from '../Types';
-import { getEventsBetweenDates } from '@/api/eventApi';
+import { DayTile } from './day-tile';
+import type { Event, CourseClass } from '../Types';
+import { getCalendarEventsBetweenDates } from '@/api/calendarEventApi';
+import { dateToISODate, isEvent } from '@/utils';
 
 export const CalendarBig = () => {
   const [month, setMonth] = useState<number | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [extraBefore, setExtraBefore] = useState<Date[]>([]);
   const [extraAfter, setExtraAfter] = useState<Date[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [allEvents, setAllEvents] = useState<(CourseClass | Event)[]>([]);
   const months = [
     'January',
     'February',
@@ -52,14 +53,13 @@ export const CalendarBig = () => {
         const daysBefore = (getDay(firstDayOfMonth) + 6) % 7;
         const firstVisibleDay = addDays(firstDayOfMonth, -daysBefore);
         const lastVisibleDay = addDays(firstVisibleDay, 41);
-        setEvents([]);
 
-        const data = await getEventsBetweenDates(
+        const allEventData = await getCalendarEventsBetweenDates(
           dateToISODate(firstVisibleDay),
           dateToISODate(lastVisibleDay),
         );
 
-        setEvents(data);
+        setAllEvents(allEventData);
       } catch (error) {
         console.error(error);
       }
@@ -123,6 +123,22 @@ export const CalendarBig = () => {
     setExtraAfter(nextDays);
   };
 
+  const filteredEvents = (date: Date) => {
+    const ISOdate = dateToISODate(date);
+    return allEvents.filter((event) => {
+      if (isEvent(event)) {
+        return (
+          ISOdate == event.dateStart ||
+          (event.dateEnd &&
+            ISOdate >= event.dateStart &&
+            ISOdate <= event.dateEnd)
+        );
+      } else {
+        return ISOdate == event.classStart.slice(0, 10);
+      }
+    });
+  };
+
   return (
     <div className="w-[800px] h-[720px] bg-[var(--frame-beige)] m-[30px] rounded-2xl flex flex-col items-center justify-between">
       <div className="relative flex w-full h-[65px] bg-[var(--frame-dark-beige)] rounded-t-2xl text-[var(--text-brown)] text-[30px] items-center justify-between px-5">
@@ -170,13 +186,7 @@ export const CalendarBig = () => {
           <DayTile
             key={dateToISODate(date)}
             date={date}
-            events={events.filter(
-              (event) =>
-                dateToISODate(date) == event.dateStart ||
-                (event.dateEnd &&
-                  dateToISODate(date) >= event.dateStart &&
-                  dateToISODate(date) <= event.dateEnd),
-            )}
+            allEvents={filteredEvents(date)}
             muted={true}
           />
         ))}
@@ -186,19 +196,12 @@ export const CalendarBig = () => {
               { length: getDaysInMonth(new Date(year, month, 1)) },
               (_, index) => {
                 const date = new Date(year, month, index + 1);
-                const dateISO = dateToISODate(date);
 
                 return (
                   <DayTile
                     key={index}
                     date={date}
-                    events={events.filter(
-                      (event) =>
-                        dateISO == event.dateStart ||
-                        (event.dateEnd &&
-                          dateISO >= event.dateStart &&
-                          dateISO <= event.dateEnd),
-                    )}
+                    allEvents={filteredEvents(date)}
                   />
                 );
               },
@@ -209,13 +212,7 @@ export const CalendarBig = () => {
           <DayTile
             key={dateToISODate(date)}
             date={date}
-            events={events.filter(
-              (event) =>
-                dateToISODate(date) == event.dateStart ||
-                (event.dateEnd &&
-                  dateToISODate(date) >= event.dateStart &&
-                  dateToISODate(date) <= event.dateEnd),
-            )}
+            allEvents={filteredEvents(date)}
             muted={true}
           />
         ))}

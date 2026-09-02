@@ -1,0 +1,36 @@
+package com.example.springboot.controller;
+
+import com.example.springboot.service.EventService;
+import com.example.springboot.service.CourseClassService;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/calendarEvents")
+public class CalendarEventController {
+
+  private final EventService eventService;
+  private final CourseClassService classService;
+
+  public CalendarEventController(EventService eventService, CourseClassService classService) {
+    this.eventService = eventService;
+    this.classService = classService;
+  }
+
+  @GetMapping("/between")
+  public List<Object> getCalendarEventsBetweenDates(@RequestParam LocalDate date1,
+      @RequestParam LocalDate date2) {
+    List<Object> result = new ArrayList<>();
+
+    result.addAll(eventService.getEventsBetweenDates(date1, date2));
+    result.addAll(classService.getClassesBetweenDates(date1, date2));
+    // future TODO add project events as well
+
+    return result;
+  }
+
+}

@@ -17,3 +17,27 @@ export interface Event {
   notes: string | null;
   category: Category;
 }
+
+export interface Subject {
+  subjectId: number;
+  color: string;
+  name: string;
+}
+
+export interface Course {
+  courseId: number;
+  type: string;
+  repeatWeeks: number | null;
+  subject: Subject;
+}
+
+export interface CourseClass {
+  courseClassId: number;
+  classStart: string;
+  duration: string;
+  professor: string | null;
+  room: string | null;
+  course: Course;
+}
+
+export type CalendarItem = Event | CourseClass;

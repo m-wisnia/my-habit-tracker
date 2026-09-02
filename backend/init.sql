@@ -64,8 +64,7 @@ add constraint course_subject_fk foreign key (subject_id) references subject (su
 
 create table course_class (
   course_class_id bigint generated always as identity primary key,
-  class_date date not null,
-  time_start time not null,
+  class_start timestamp not null,
   duration interval not null,
   professor text,
   room text,
@@ -78,8 +77,7 @@ add constraint course_class_fk foreign key (course_id) references course (course
 create table exam (
   exam_id bigint generated always as identity primary key,
   name text not null,
-  exam_date date not null,
-  time_start time not null,
+  exam_start timestamp not null,
   duration interval not null,
   notes text,
   subject_id bigint not null
@@ -219,71 +217,387 @@ insert into
 values
   ('Default', '#EFD1E6');
 
-insert into
+-- =========================
+-- SUBJECTS
+-- =========================
+INSERT INTO
+  subject (name)
+VALUES
+  ('Mathematics'),
+  ('Computer Science'),
+  ('Physics'),
+  ('English');
+
+-- =========================
+-- COURSES
+-- =========================
+INSERT INTO
+  course (type, repeat_weeks, subject_id)
+VALUES
+  (
+    'Lecture',
+    12,
+    (
+      SELECT
+        subject_id
+      FROM
+        subject
+      WHERE
+        name = 'Mathematics'
+    )
+  ),
+  (
+    'Lecture',
+    12,
+    (
+      SELECT
+        subject_id
+      FROM
+        subject
+      WHERE
+        name = 'Computer Science'
+    )
+  ),
+  (
+    'Lab',
+    12,
+    (
+      SELECT
+        subject_id
+      FROM
+        subject
+      WHERE
+        name = 'Physics'
+    )
+  ),
+  (
+    'Seminar',
+    8,
+    (
+      SELECT
+        subject_id
+      FROM
+        subject
+      WHERE
+        name = 'English'
+    )
+  );
+
+-- =========================
+-- COURSE CLASSES
+-- =========================
+-- Monday 2026-08-03
+INSERT INTO
+  course_class (class_start, duration, professor, room, course_id)
+VALUES
+  (
+    '2026-08-03 09:00:00',
+    INTERVAL '1 hour 30 minutes',
+    'Dr. Smith',
+    'A101',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Lecture'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'Mathematics'
+        )
+    )
+  ),
+  (
+    '2026-08-03 13:00:00',
+    INTERVAL '1 hour 30 minutes',
+    'Dr. Johnson',
+    'B204',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Lecture'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'Computer Science'
+        )
+    )
+  );
+
+-- Tuesday 2026-08-04
+INSERT INTO
+  course_class (class_start, duration, professor, room, course_id)
+VALUES
+  (
+    '2026-08-04 10:00:00',
+    INTERVAL '2 hours',
+    'Dr. Williams',
+    'C301',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Lab'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'Physics'
+        )
+    )
+  ),
+  (
+    '2026-08-04 14:00:00',
+    INTERVAL '1 hour',
+    'Prof. Brown',
+    'D102',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Seminar'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'English'
+        )
+    )
+  );
+
+-- Wednesday 2026-08-05
+INSERT INTO
+  course_class (class_start, duration, professor, room, course_id)
+VALUES
+  (
+    '2026-08-05 08:30:00',
+    INTERVAL '1 hour 30 minutes',
+    'Dr. Smith',
+    'A101',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Lecture'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'Mathematics'
+        )
+    )
+  ),
+  (
+    '2026-08-05 15:00:00',
+    INTERVAL '1 hour 30 minutes',
+    'Dr. Johnson',
+    'B204',
+    (
+      SELECT
+        course_id
+      FROM
+        course
+      WHERE
+        type = 'Lecture'
+        AND subject_id = (
+          SELECT
+            subject_id
+          FROM
+            subject
+          WHERE
+            name = 'Computer Science'
+        )
+    )
+  );
+
+-- =========================
+-- EVENTS
+-- =========================
+-- Full-day event on Monday
+INSERT INTO
+  event (
+    name,
+    address,
+    fullday,
+    date_start,
+    date_end,
+    notes,
+    category_id
+  )
+VALUES
+  (
+    'University Orientation',
+    'Main Campus',
+    true,
+    '2026-08-03',
+    '2026-08-03',
+    'Welcome and orientation day',
+    1
+  );
+
+-- Timed event on Monday (same day as classes)
+INSERT INTO
   event (
     name,
     address,
     fullday,
     date_start,
     time_start,
-    date_end,
     duration,
-    category_id,
-    notes
+    notes,
+    category_id
   )
-values
+VALUES
   (
-    'Event with an absurdly long unnecesary name',
-    'ABC street DEF city',
+    'Doctor Appointment',
+    'City Medical Center',
     false,
-    '2026-08-27',
-    '12:30:00',
-    null,
-    '2 hours 30 minutes',
-    1,
-    null
-  ),
+    '2026-08-03',
+    '11:00:00',
+    INTERVAL '45 minutes',
+    'Bring insurance card',
+    1
+  );
+
+-- Timed event on Tuesday (same day as classes)
+INSERT INTO
+  event (
+    color,
+    name,
+    address,
+    fullday,
+    date_start,
+    time_start,
+    duration,
+    notes,
+    category_id
+  )
+VALUES
   (
-    'Event 2',
-    null,
+    '#A8DADC',
+    'Study Group',
+    'University Library',
+    false,
+    '2026-08-04',
+    '16:00:00',
+    INTERVAL '2 hours',
+    'Prepare for physics lab',
+    1
+  );
+
+-- Full-day event on Wednesday
+INSERT INTO
+  event (
+    name,
+    address,
+    fullday,
+    date_start,
+    date_end,
+    notes,
+    category_id
+  )
+VALUES
+  (
+    'Project Deadline',
+    NULL,
     true,
-    '2026-08-15',
-    null,
-    '2026-08-20',
-    null,
-    1,
-    'Note'
-  ),
+    '2026-08-05',
+    '2026-08-05',
+    'Submit semester project',
+    1
+  );
+
+-- Multi-day full-day event
+INSERT INTO
+  event (
+    name,
+    address,
+    fullday,
+    date_start,
+    date_end,
+    notes,
+    category_id
+  )
+VALUES
   (
-    'Event 3',
-    null,
-    false,
-    '2026-08-16',
-    '11:00:00',
-    null,
-    '1 hour',
-    1,
-    'Note'
-  ),
+    'Student Conference',
+    'Conference Center',
+    true,
+    '2026-08-06',
+    '2026-08-07',
+    'Annual student conference',
+    1
+  );
+
+-- Another timed event
+INSERT INTO
+  event (
+    color,
+    name,
+    address,
+    fullday,
+    date_start,
+    time_start,
+    duration,
+    notes,
+    category_id
+  )
+VALUES
   (
-    'Event 4',
-    null,
+    '#FFADAD',
+    'Dinner with Friends',
+    'Downtown Restaurant',
     false,
-    '2026-08-16',
-    '11:00:00',
-    null,
-    '1 hour',
-    1,
-    'Note'
-  ),
+    '2026-08-07',
+    '19:00:00',
+    INTERVAL '2 hours',
+    'Dinner after conference',
+    1
+  );
+
+-- Weekend full-day event
+INSERT INTO
+  event (
+    color,
+    name,
+    address,
+    fullday,
+    date_start,
+    date_end,
+    notes,
+    category_id
+  )
+VALUES
   (
-    'Event 5',
-    null,
-    false,
-    '2026-08-16',
-    '11:00:00',
-    null,
-    '1 hour',
-    1,
-    'Note'
+    '#BDE0FE',
+    'Hiking Trip',
+    'National Park',
+    true,
+    '2026-08-08',
+    '2026-08-08',
+    'Meet at 08:00',
+    1
   );

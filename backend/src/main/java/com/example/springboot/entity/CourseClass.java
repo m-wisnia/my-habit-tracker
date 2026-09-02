@@ -1,8 +1,7 @@
 package com.example.springboot.entity;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -22,10 +21,7 @@ public class CourseClass {
     private Long courseClassId;
 
     @Column(nullable = false)
-    private LocalDate classDate;
-
-    @Column(nullable = false)
-    private LocalTime timeStart;
+    private LocalDateTime classStart;
 
     @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
     @Column(nullable = false, columnDefinition = "interval")
