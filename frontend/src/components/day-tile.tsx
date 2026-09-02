@@ -1,12 +1,12 @@
 import { getDate, isWeekend, isToday } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { Event, CourseClass } from '../Types';
-import { dateToISODate, isEvent } from '@/utils';
+import type { Event, CourseClass, Stage } from '../Types';
+import { dateToISODate, isEvent, isClass } from '@/utils';
 
 interface DayTileProps {
   date: Date;
-  allEvents: (Event | CourseClass)[];
+  allEvents: (Event | CourseClass | Stage)[];
   muted?: Boolean;
 }
 
@@ -19,11 +19,19 @@ export const DayTile = ({ date, allEvents, muted = false }: DayTileProps) => {
   const sortedEvents = [...allEvents].sort((a, b) => {
     const dateA = isEvent(a)
       ? `${a.dateStart}T${a.timeStart ?? '00:00'}`
-      : a.classStart;
+      : isClass(a)
+        ? a.classStart
+        : a.deadline
+          ? a.deadline
+          : Infinity;
 
     const dateB = isEvent(b)
       ? `${b.dateStart}T${b.timeStart ?? '00:00'}`
-      : b.classStart;
+      : isClass(b)
+        ? b.classStart
+        : b.deadline
+          ? b.deadline
+          : Infinity;
 
     return new Date(dateA).getTime() - new Date(dateB).getTime();
   });
@@ -60,17 +68,29 @@ export const DayTile = ({ date, allEvents, muted = false }: DayTileProps) => {
                       : event.name.slice(0, 8) + '...'}
                   </div>
                 );
-              } else {
+              } else if (isClass(event)) {
                 const subjectName = event.course.subject.name;
                 return (
                   <div
                     key={`class-${event.courseClassId}`}
-                    className="w-full text-[var(--event-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap rounded-3xl"
+                    className="w-full text-[var(--class-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap rounded-3xl"
                     style={{ backgroundColor: event.course.subject.color }}
                   >
                     {subjectName.length <= 7 || isHovered
                       ? subjectName
                       : subjectName.slice(0, 8) + '...'}
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    key={`project-stage-${event.stageId}`}
+                    className="w-full text-[var(--project-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap rounded-3xl"
+                    style={{ backgroundColor: event.project.color }}
+                  >
+                    {event.name.length <= 7 || isHovered
+                      ? event.name
+                      : event.name.slice(0, 8) + '...'}
                   </div>
                 );
               }

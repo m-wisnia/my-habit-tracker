@@ -11,3 +11,7 @@ export const dateToISODate = (date: Date) => {
 export const isEvent = (item: CalendarItem) => {
   return 'eventId' in item;
 };
+
+export const isClass = (item: CalendarItem) => {
+  return 'courseClassId' in item;
+};

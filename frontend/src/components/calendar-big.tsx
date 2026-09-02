@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
 import { DayTile } from './day-tile';
-import type { Event, CourseClass } from '../Types';
+import type { Event, CourseClass, Stage } from '../Types';
 import { getCalendarEventsBetweenDates } from '@/api/calendarEventApi';
-import { dateToISODate, isEvent } from '@/utils';
+import { dateToISODate, isEvent, isClass } from '@/utils';
 
 export const CalendarBig = () => {
   const [month, setMonth] = useState<number | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [extraBefore, setExtraBefore] = useState<Date[]>([]);
   const [extraAfter, setExtraAfter] = useState<Date[]>([]);
-  const [allEvents, setAllEvents] = useState<(CourseClass | Event)[]>([]);
+  const [allEvents, setAllEvents] = useState<(CourseClass | Event | Stage)[]>(
+    [],
+  );
   const months = [
     'January',
     'February',
@@ -133,8 +135,10 @@ export const CalendarBig = () => {
             ISOdate >= event.dateStart &&
             ISOdate <= event.dateEnd)
         );
-      } else {
+      } else if (isClass(event)) {
         return ISOdate == event.classStart.slice(0, 10);
+      } else {
+        return event.deadline && ISOdate == event.deadline.slice(0, 10);
       }
     });
   };

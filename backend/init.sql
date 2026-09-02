@@ -601,3 +601,122 @@ VALUES
     'Meet at 08:00',
     1
   );
+
+-- Projects
+INSERT INTO
+  project (name, start_date)
+VALUES
+  ('Website Redesign', '2026-09-01'),
+  ('Mobile App Development', '2026-09-05'),
+  ('Marketing Campaign', '2026-09-10'),
+  ('Database Migration', '2026-09-15');
+
+-- Stages
+INSERT INTO
+  stage (
+    stage_number,
+    name,
+    completed,
+    deadline,
+    project_id
+  )
+VALUES
+  -- Website Redesign
+  (
+    1,
+    'Research & Planning',
+    true,
+    '2026-09-05 17:00:00',
+    1
+  ),
+  (2, 'UI/UX Design', true, '2026-09-12 17:00:00', 1),
+  (
+    3,
+    'Frontend Development',
+    false,
+    '2026-09-25 17:00:00',
+    1
+  ),
+  (
+    4,
+    'Testing & Launch',
+    false,
+    '2026-10-02 17:00:00',
+    1
+  ),
+  -- Mobile App Development
+  (1, 'Requirements', true, '2026-09-10 17:00:00', 2),
+  (2, 'Wireframes', false, '2026-09-18 17:00:00', 2),
+  (
+    3,
+    'Backend Development',
+    false,
+    '2026-10-01 17:00:00',
+    2
+  ),
+  (
+    4,
+    'App Development',
+    false,
+    '2026-10-15 17:00:00',
+    2
+  ),
+  (
+    5,
+    'App Store Release',
+    false,
+    '2026-10-25 17:00:00',
+    2
+  ),
+  -- Marketing Campaign
+  (
+    1,
+    'Market Research',
+    true,
+    '2026-09-14 12:00:00',
+    3
+  ),
+  (
+    2,
+    'Content Creation',
+    false,
+    '2026-09-22 17:00:00',
+    3
+  ),
+  (
+    3,
+    'Social Media Launch',
+    false,
+    '2026-09-30 17:00:00',
+    3
+  ),
+  (
+    4,
+    'Campaign Analysis',
+    false,
+    '2026-10-10 17:00:00',
+    3
+  ),
+  -- Database Migration
+  (
+    1,
+    'Database Audit',
+    true,
+    '2026-09-20 17:00:00',
+    4
+  ),
+  (
+    2,
+    'Migration Planning',
+    false,
+    '2026-09-27 17:00:00',
+    4
+  ),
+  (
+    3,
+    'Data Migration',
+    false,
+    '2026-10-05 17:00:00',
+    4
+  ),
+  (4, 'Validation', false, '2026-10-10 17:00:00', 4);
