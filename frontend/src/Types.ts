@@ -40,6 +40,15 @@ export interface CourseClass {
   course: Course;
 }
 
+export interface Exam {
+  examId: number;
+  name: string;
+  examStart: string;
+  duration: string;
+  notes: string;
+  subject: Subject;
+}
+
 export interface Project {
   projectId: number;
   color: string;
@@ -56,4 +65,4 @@ export interface Stage {
   project: Project;
 }
 
-export type CalendarItem = Event | CourseClass | Stage;
+export type CalendarItem = Event | CourseClass | Stage | Exam;

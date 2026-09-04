@@ -435,6 +435,71 @@ VALUES
     )
   );
 
+--- exams
+INSERT INTO
+  exam (name, exam_start, duration, notes, subject_id)
+VALUES
+  -- Mathematics
+  (
+    'Mathematics Midterm',
+    '2026-10-05 09:00:00',
+    INTERVAL '2 hours',
+    'Midterm examination',
+    1
+  ),
+  (
+    'Mathematics Final',
+    '2026-12-14 09:00:00',
+    INTERVAL '2 hours 30 minutes',
+    'Final examination',
+    1
+  ),
+  -- Computer Science
+  (
+    'Computer Science Midterm',
+    '2026-10-07 13:00:00',
+    INTERVAL '2 hours',
+    'Midterm examination',
+    2
+  ),
+  (
+    'Computer Science Final',
+    '2026-12-16 13:00:00',
+    INTERVAL '3 hours',
+    'Final examination',
+    2
+  ),
+  -- Physics
+  (
+    'Physics Midterm',
+    '2026-10-09 09:00:00',
+    INTERVAL '2 hours',
+    'Midterm examination',
+    3
+  ),
+  (
+    'Physics Final',
+    '2026-12-18 09:00:00',
+    INTERVAL '2 hours 30 minutes',
+    'Final examination',
+    3
+  ),
+  -- English
+  (
+    'English Midterm',
+    '2026-10-12 13:00:00',
+    INTERVAL '1 hour 30 minutes',
+    'Midterm examination',
+    4
+  ),
+  (
+    'English Final',
+    '2026-12-21 13:00:00',
+    INTERVAL '2 hours',
+    'Final examination',
+    4
+  );
+
 -- =========================
 -- EVENTS
 -- =========================

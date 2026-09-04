@@ -7,16 +7,18 @@ import {
 } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { Event, CourseClass, Stage } from '../Types';
-import { dateToISODate, isEvent, isClass } from '@/utils';
-
-function HoverDeadlines() {
-  return <div>AAAAA</div>;
-}
+import type { Stage, CalendarItem } from '../Types';
+import {
+  dateToISODate,
+  isEvent,
+  isClass,
+  isExam,
+  isStageDeadline,
+} from '@/utils';
 
 interface DayTileProps {
   date: Date;
-  allEvents: (Event | CourseClass | Stage)[];
+  allEvents: CalendarItem[];
   deadlines: Stage[];
   muted?: Boolean;
 }
@@ -33,25 +35,32 @@ export const DayTile = ({
 
   useEffect(() => {}, []);
 
-  const sortedEvents = [...allEvents].sort((a, b) => {
-    const dateA = isEvent(a)
-      ? `${a.dateStart}T${a.timeStart ?? '00:00'}`
-      : isClass(a)
-        ? a.classStart
-        : a.deadline
-          ? a.deadline
-          : Infinity;
+  const getCalendarEventTime = (event: CalendarItem) => {
+    if (isEvent(event)) {
+      return `${event.dateStart}T${event.timeStart ?? '00:00'}`;
+    } else if (isClass(event)) {
+      return event.classStart;
+    } else if (isStageDeadline(event)) {
+      return event.deadline ? event.deadline : Infinity;
+    } else if (isExam(event)) {
+      return event.examStart;
+    } else {
+      return -1;
+    }
+  };
 
-    const dateB = isEvent(b)
-      ? `${b.dateStart}T${b.timeStart ?? '00:00'}`
-      : isClass(b)
-        ? b.classStart
-        : b.deadline
-          ? b.deadline
-          : Infinity;
+  const sortedEvents = [...allEvents].sort((a, b) => {
+    const dateA = getCalendarEventTime(a);
+    const dateB = getCalendarEventTime(b);
 
     return new Date(dateA).getTime() - new Date(dateB).getTime();
   });
+
+  const shortName = (eventName: string) => {
+    return eventName.length <= 7 || isHovered
+      ? eventName
+      : eventName.slice(0, 8) + '...';
+  };
 
   return (
     <div
@@ -95,7 +104,7 @@ export const DayTile = ({
                       return (
                         <span
                           key={ddline.stageId}
-                          className="w-full text-[var(--project-dark)] px-2 my-1 flex whitespace-nowrap font-[Young_Serif]"
+                          className="w-full text-[var(--project-dark)] px-2 my-1 flex whitespace-nowrap"
                         >
                           {ddline.name} in {noDays}{' '}
                           {noDays == 1 ? 'day' : 'days'}
@@ -132,11 +141,7 @@ export const DayTile = ({
                           : event.timeStart.slice(0, 5)}
                       </span>
                     )}
-                    <span>
-                      {event.name.length <= 7 || isHovered
-                        ? event.name
-                        : event.name.slice(0, 8) + '...'}
-                    </span>
+                    <span>{shortName(event.name)}</span>
                   </div>
                 );
               } else if (isClass(event)) {
@@ -152,14 +157,10 @@ export const DayTile = ({
                         {event.classStart.slice(11, 16)}
                       </span>
                     )}
-                    <span>
-                      {subjectName.length <= 7 || isHovered
-                        ? subjectName
-                        : subjectName.slice(0, 8) + '...'}
-                    </span>
+                    <span>{shortName(subjectName)}</span>
                   </div>
                 );
-              } else {
+              } else if (isStageDeadline(event)) {
                 return (
                   <div
                     key={`project-stage-${event.stageId}`}
@@ -171,10 +172,25 @@ export const DayTile = ({
                         {event.deadline.slice(11, 16)}
                       </span>
                     )}
+                    <span>{shortName(event.name)}</span>
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    key={`exam-${event.examId}`}
+                    className="w-full text-[var(--class-dark)] font-[Young_Serif] text-xs text-left px-2 mb-1 whitespace-nowrap rounded-3xl"
+                    style={{ backgroundColor: event.subject.color }}
+                  >
+                    {isHovered && (
+                      <span className="mr-2 font-[PT_Sans]">
+                        {event.examStart.slice(11, 16)}
+                      </span>
+                    )}
                     <span>
-                      {event.name.length <= 7 || isHovered
-                        ? event.name
-                        : event.name.slice(0, 8) + '...'}
+                      {shortName(
+                        '! ' + event.subject.name + ' : ' + event.name,
+                      )}
                     </span>
                   </div>
                 );

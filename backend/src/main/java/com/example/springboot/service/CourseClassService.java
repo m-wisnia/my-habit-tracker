@@ -1,7 +1,6 @@
 package com.example.springboot.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -43,9 +42,10 @@ public class CourseClassService {
   }
 
   public List<CourseClass> getClassesBetweenDates(LocalDate date1, LocalDate date2) {
-    LocalDateTime start = date1.atStartOfDay();
-    LocalDateTime end = date2.plusDays(1).atStartOfDay();
+    return classRepository.findClassesBetweenDates(date1, date2);
+  }
 
-    return classRepository.findClassesBetweenDates(start, end);
+  public List<CourseClass> getClassesOnDate(LocalDate date) {
+    return classRepository.findClassesHappeningOn(date);
   }
 }

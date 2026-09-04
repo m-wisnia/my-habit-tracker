@@ -10,19 +10,25 @@ import {
 } from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
 import { DayTile } from './day-tile';
-import type { Event, CourseClass, Stage } from '../Types';
+import type { Event, CourseClass, Stage, Exam } from '../Types';
 import { getCalendarEventsBetweenDates } from '@/api/calendarEventApi';
 import { getStagesBetweenDates } from '@/api/stageApi';
-import { dateToISODate, isEvent, isClass } from '@/utils';
+import {
+  dateToISODate,
+  isEvent,
+  isClass,
+  isExam,
+  isStageDeadline,
+} from '@/utils';
 
 export const CalendarBig = () => {
   const [month, setMonth] = useState<number | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [extraBefore, setExtraBefore] = useState<Date[]>([]);
   const [extraAfter, setExtraAfter] = useState<Date[]>([]);
-  const [allEvents, setAllEvents] = useState<(CourseClass | Event | Stage)[]>(
-    [],
-  );
+  const [allEvents, setAllEvents] = useState<
+    (CourseClass | Event | Stage | Exam)[]
+  >([]);
   const [deadlines, setDeadlines] = useState<Stage[]>([]);
   const months = [
     'January',
@@ -153,8 +159,10 @@ export const CalendarBig = () => {
         );
       } else if (isClass(event)) {
         return ISOdate == event.classStart.slice(0, 10);
-      } else {
+      } else if (isStageDeadline(event)) {
         return event.deadline && ISOdate == event.deadline.slice(0, 10);
+      } else if (isExam(event)) {
+        return ISOdate == event.examStart.slice(0, 10);
       }
     });
   };

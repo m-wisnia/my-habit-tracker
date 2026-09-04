@@ -15,3 +15,11 @@ export const isEvent = (item: CalendarItem) => {
 export const isClass = (item: CalendarItem) => {
   return 'courseClassId' in item;
 };
+
+export const isStageDeadline = (item: CalendarItem) => {
+  return 'stageId' in item;
+};
+
+export const isExam = (item: CalendarItem) => {
+  return 'examId' in item;
+};

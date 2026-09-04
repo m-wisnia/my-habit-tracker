@@ -14,49 +14,47 @@ import java.util.List;
 @RequestMapping("/api/stages")
 public class StageController {
 
-    private final StageRepository stageRepository;
-    private final StageService stageService;
+  private final StageService stageService;
 
-    public StageController(StageService stageService, StageRepository stageRepository) {
-        this.stageService = stageService;
-        this.stageRepository = stageRepository;
-    }
+  public StageController(StageService stageService, StageRepository stageRepository) {
+    this.stageService = stageService;
+  }
 
-    @GetMapping("/between")
-    public List<Stage> getStagesBetweenDates(
-            @RequestParam LocalDate date1,
-            @RequestParam LocalDate date2) {
+  @GetMapping("/between")
+  public List<Stage> getStagesBetweenDates(
+      @RequestParam LocalDate date1,
+      @RequestParam LocalDate date2) {
 
-        return stageService.getStagesBetweenDates(date1, date2);
-    }
+    return stageService.getStagesBetweenDates(date1, date2);
+  }
 
-    @GetMapping
-    public List<Stage> getStagesOnDate(
-            @RequestParam LocalDate date) {
+  @GetMapping
+  public List<Stage> getStagesOnDate(
+      @RequestParam LocalDate date) {
 
-        return stageService.getStagesOnDate(date);
-    }
+    return stageService.getStagesOnDate(date);
+  }
 
-    @GetMapping("/{id}")
-    public Stage getstageById(@PathVariable Long id) {
-        return stageService.getStageById(id);
-    }
+  @GetMapping("/{id}")
+  public Stage getstageById(@PathVariable Long id) {
+    return stageService.getStageById(id);
+  }
 
-    @PostMapping
-    public Stage createEvent(@Valid @RequestBody Stage stage) {
-        return stageService.createStage(stage);
-    }
+  @PostMapping
+  public Stage createEvent(@Valid @RequestBody Stage stage) {
+    return stageService.createStage(stage);
+  }
 
-    @PutMapping("/{id}")
-    public Stage updateStage(
-            @PathVariable Long id,
-            @Valid @RequestBody Stage stage) {
+  @PutMapping("/{id}")
+  public Stage updateStage(
+      @PathVariable Long id,
+      @Valid @RequestBody Stage stage) {
 
-        return stageService.updateStage(id, stage);
-    }
+    return stageService.updateStage(id, stage);
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteStage(@PathVariable Long id) {
-        stageService.deleteStage(id);
-    }
+  @DeleteMapping("/{id}")
+  public void deleteStage(@PathVariable Long id) {
+    stageService.deleteStage(id);
+  }
 }

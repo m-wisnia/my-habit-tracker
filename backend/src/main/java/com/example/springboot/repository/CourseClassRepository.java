@@ -1,6 +1,6 @@
 package com.example.springboot.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,10 +14,18 @@ public interface CourseClassRepository extends JpaRepository<CourseClass, Long> 
   @Query("""
       SELECT cc
       FROM CourseClass cc
-      WHERE cc.classStart <= :date2
-      AND cc.classStart >= :date1
+      WHERE CAST (cc.classStart as LocalDate) <= :date2
+      AND CAST (cc.classStart as LocalDate) >= :date1
       """)
   List<CourseClass> findClassesBetweenDates(
-      @Param("date1") LocalDateTime date1,
-      @Param("date2") LocalDateTime date2);
+      @Param("date1") LocalDate date1,
+      @Param("date2") LocalDate date2);
+
+  @Query("""
+      SELECT cc
+      FROM CourseClass cc
+      WHERE CAST (cc.classStart as LocalDate) = :date
+      """)
+  List<CourseClass> findClassesHappeningOn(
+      @Param("date") LocalDate date);
 }

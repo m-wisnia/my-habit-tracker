@@ -43,13 +43,10 @@ public class StageService {
   }
 
   public List<Stage> getStagesBetweenDates(LocalDate date1, LocalDate date2) {
-    LocalDateTime start = date1.atStartOfDay();
-    LocalDateTime end = date2.plusDays(1).atStartOfDay();
-    return stageRepository.findStagesBetweenDates(start, end);
+    return stageRepository.findStagesBetweenDates(date1, date2);
   }
 
   public List<Stage> getStagesOnDate(LocalDate date) {
-    LocalDateTime onDate = date.atStartOfDay();
-    return stageRepository.findStagesHappeningOn(onDate);
+    return stageRepository.findStagesHappeningOn(date);
   }
 }
