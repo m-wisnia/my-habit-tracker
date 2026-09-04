@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import { getDaysInMonth, getMonth, getYear, getDay, addDays } from 'date-fns';
+import {
+  getDaysInMonth,
+  getMonth,
+  getYear,
+  getDay,
+  addDays,
+  differenceInDays,
+  startOfDay,
+} from 'date-fns';
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-react';
 import { DayTile } from './day-tile';
 import type { Event, CourseClass, Stage } from '../Types';
 import { getCalendarEventsBetweenDates } from '@/api/calendarEventApi';
+import { getStagesBetweenDates } from '@/api/stageApi';
 import { dateToISODate, isEvent, isClass } from '@/utils';
 
 export const CalendarBig = () => {
@@ -14,6 +23,7 @@ export const CalendarBig = () => {
   const [allEvents, setAllEvents] = useState<(CourseClass | Event | Stage)[]>(
     [],
   );
+  const [deadlines, setDeadlines] = useState<Stage[]>([]);
   const months = [
     'January',
     'February',
@@ -61,6 +71,12 @@ export const CalendarBig = () => {
           dateToISODate(lastVisibleDay),
         );
 
+        const stages = await getStagesBetweenDates(
+          dateToISODate(firstVisibleDay),
+          dateToISODate(addDays(lastVisibleDay, 3)),
+        );
+
+        setDeadlines(stages);
         setAllEvents(allEventData);
       } catch (error) {
         console.error(error);
@@ -143,6 +159,17 @@ export const CalendarBig = () => {
     });
   };
 
+  const upcomingDeadlines = (date: Date) => {
+    return deadlines.filter(
+      (stage) =>
+        stage.deadline &&
+        differenceInDays(
+          startOfDay(new Date(stage.deadline)),
+          startOfDay(date),
+        ) <= 3,
+    );
+  };
+
   return (
     <div className="w-[800px] h-[720px] bg-[var(--frame-beige)] m-[30px] rounded-2xl flex flex-col items-center justify-between">
       <div className="relative flex w-full h-[65px] bg-[var(--frame-dark-beige)] rounded-t-2xl text-[var(--text-brown)] text-[30px] items-center justify-between px-5">
@@ -191,6 +218,7 @@ export const CalendarBig = () => {
             key={dateToISODate(date)}
             date={date}
             allEvents={filteredEvents(date)}
+            deadlines={upcomingDeadlines(date)}
             muted={true}
           />
         ))}
@@ -206,6 +234,7 @@ export const CalendarBig = () => {
                     key={index}
                     date={date}
                     allEvents={filteredEvents(date)}
+                    deadlines={upcomingDeadlines(date)}
                   />
                 );
               },
@@ -217,6 +246,7 @@ export const CalendarBig = () => {
             key={dateToISODate(date)}
             date={date}
             allEvents={filteredEvents(date)}
+            deadlines={upcomingDeadlines(date)}
             muted={true}
           />
         ))}

@@ -13,10 +13,16 @@ import { dateToISODate, isEvent, isClass } from '@/utils';
 interface DayTileProps {
   date: Date;
   allEvents: (Event | CourseClass | Stage)[];
+  deadlines: Stage[];
   muted?: Boolean;
 }
 
-export const DayTile = ({ date, allEvents, muted = false }: DayTileProps) => {
+export const DayTile = ({
+  date,
+  allEvents,
+  deadlines,
+  muted = false,
+}: DayTileProps) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
 

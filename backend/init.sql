@@ -20,19 +20,21 @@ create table event (
   check (
     -- Full-day event
     (
-      fullday = true
-      and time_start is null
-      and duration is null
-      and date_end >= date_start
-    )
-    or
-    -- Not fullday
-    (
-      fullday = false
-      and time_start is not null
-      and duration is not null
-      and duration <= interval '1 day'
-      and duration > interval '0'
+      (
+        fullday = true
+        and time_start is null
+        and duration is null
+        and date_end >= date_start
+      )
+      or
+      -- Not fullday
+      (
+        fullday = false
+        and time_start is not null
+        and duration is not null
+        and duration <= interval '1 day'
+        and duration > interval '0'
+      )
     )
     and (color ~ '^#[0-9A-Fa-f]{6}$')
   )

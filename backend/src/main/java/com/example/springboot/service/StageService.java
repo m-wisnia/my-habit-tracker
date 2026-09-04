@@ -26,7 +26,7 @@ public class StageService {
     return stageRepository.save(stage);
   }
 
-  public Stage updateEvent(Long id, Stage updatedStage) {
+  public Stage updateStage(Long id, Stage updatedStage) {
     Stage stage = stageRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Project stage not found"));
 
@@ -46,5 +46,10 @@ public class StageService {
     LocalDateTime start = date1.atStartOfDay();
     LocalDateTime end = date2.plusDays(1).atStartOfDay();
     return stageRepository.findStagesBetweenDates(start, end);
+  }
+
+  public List<Stage> getStagesOnDate(LocalDate date) {
+    LocalDateTime onDate = date.atStartOfDay();
+    return stageRepository.findStagesHappeningOn(onDate);
   }
 }
