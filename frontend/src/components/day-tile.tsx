@@ -10,6 +10,10 @@ import { useEffect, useState } from 'react';
 import type { Event, CourseClass, Stage } from '../Types';
 import { dateToISODate, isEvent, isClass } from '@/utils';
 
+function HoverDeadlines() {
+  return <div>AAAAA</div>;
+}
+
 interface DayTileProps {
   date: Date;
   allEvents: (Event | CourseClass | Stage)[];
@@ -25,6 +29,7 @@ export const DayTile = ({
 }: DayTileProps) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+  const [showDeadlines, setShowDeadlines] = useState(false);
 
   useEffect(() => {}, []);
 
@@ -50,7 +55,7 @@ export const DayTile = ({
 
   return (
     <div
-      className="w-[100px] h-[90px] group relative z-0 hover:z-50"
+      className="w-[100px] h-[90px] group relative z-0 cursor-pointer hover:z-50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -64,9 +69,43 @@ export const DayTile = ({
         <div className="flex justify-between w-full mb-1">
           <span className="leading-none ml-1">{getDate(date)}</span>
           {deadlines.length != 0 && (
-            <span className="leading-none font-[Young_Serif] mr-2 text-[var(--project-light)]">
-              !
-            </span>
+            <div className="relative inline-block">
+              <span
+                className="leading-none font-[Young_Serif] mr-2 text-[var(--project-light)] cursor-help"
+                onMouseEnter={() => setShowDeadlines(true)}
+                onMouseLeave={() => setShowDeadlines(false)}
+              >
+                !
+              </span>
+              {showDeadlines && (
+                <div
+                  className={`absolute left-0 bottom-full mb-2 rounded-lg bg-white p-3 shadow-lg border-2 border-[var(--project-light)] transition-all duration-200 ease-out
+                  ${
+                    showDeadlines
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-1 pointer-events-none'
+                  }`}
+                >
+                  {deadlines.map((ddline) => {
+                    if (ddline.deadline) {
+                      const noDays = differenceInDays(
+                        startOfDay(new Date(ddline.deadline)),
+                        startOfDay(date),
+                      );
+                      return (
+                        <span
+                          key={ddline.stageId}
+                          className="w-full text-[var(--project-dark)] px-2 my-1 flex whitespace-nowrap font-[Young_Serif]"
+                        >
+                          {ddline.name} in {noDays}{' '}
+                          {noDays == 1 ? 'day' : 'days'}
+                        </span>
+                      );
+                    }
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </div>
 
