@@ -61,9 +61,15 @@ export const DayTile = ({
         ${isToday(date) ? 'outline-2 outline-[var(--bg-dark)]' : ''}`}
         onClick={() => navigate(`/calendar/${dateToISODate(date)}`)}
       >
-        <span className="w-full leading-none text-right pr-2 mb-1">
-          {getDate(date)}
-        </span>
+        <div className="flex justify-between w-full mb-1">
+          <span className="leading-none ml-1">{getDate(date)}</span>
+          {deadlines.length != 0 && (
+            <span className="leading-none font-[Young_Serif] mr-2 text-[var(--project-light)]">
+              !
+            </span>
+          )}
+        </div>
+
         <div>
           {(isHovered ? sortedEvents : sortedEvents.slice(0, 3)).map(
             (event) => {

@@ -1,6 +1,6 @@
 import type { Stage } from "../Types";
 
-const API_URL = 'http://localhost:8080/api/events';
+const API_URL = 'http://localhost:8080/api/stages';
 
 export async function getStagesBetweenDates(
   date1: string,

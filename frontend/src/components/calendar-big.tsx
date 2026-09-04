@@ -166,7 +166,11 @@ export const CalendarBig = () => {
         differenceInDays(
           startOfDay(new Date(stage.deadline)),
           startOfDay(date),
-        ) <= 3,
+        ) <= 3 &&
+        differenceInDays(
+          startOfDay(new Date(stage.deadline)),
+          startOfDay(date),
+        ) > 0,
     );
   };
 
